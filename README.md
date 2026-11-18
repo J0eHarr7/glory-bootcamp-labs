@@ -288,7 +288,7 @@ A "ping" tool built with `subprocess.run(f"ping -c 1 -W 1 {host}", shell=True)`.
 None of those characters are needed — a newline is just as good a shell
 command separator and isn't on the blacklist:
 ```
-?host=127.0.0.1%0acat /flag2.txt
+?host=127.0.0.1%0acat%20/flag2.txt
 ```
 
 ### Level 3 — `/level3?host=...` — also blocks spaces and tabs
