@@ -1,0 +1,81 @@
+services:
+  # ---------------- SSTI ----------------
+  ssti:
+    build: ./ssti
+    ports: ["5101:5000"]
+    restart: unless-stopped
+
+  # ---------------- CSTI ----------------
+  csti:
+    build: ./csti
+    ports: ["5102:5000"]
+    restart: unless-stopped
+
+  # ---------------- SSRF ----------------
+  ssrf:
+    build: ./ssrf
+    ports: ["5103:5000"]
+    environment:
+      - INTERNAL_BASE=http://internal-service:8000
+    depends_on: [internal-service]
+    restart: unless-stopped
+
+  internal-service:
+    build: ./ssrf/internal-service
+    # intentionally NOT published to the host - only reachable from inside
+    # the compose network, exactly like a real internal-only service
+    expose: ["8000"]
+    restart: unless-stopped
+
+  # ---------------- CSRF ----------------
+  csrf:
+    build: ./csrf
+    ports: ["5104:5000"]
+    restart: unless-stopped
+
+  # ---------------- Race Condition ----------------
+  race-condition:
+    build: ./race-condition
+    ports: ["5105:5000"]
+    restart: unless-stopped
+
+  # ---------------- XSS (reflected / DOM / blind) ----------------
+  xss:
+    build: ./xss
+    ports: ["5106:5000"]
+    environment:
+      - ADMIN_SESSION_TOKEN=s3cr3t-admin-session-token-change-me
+    restart: unless-stopped
+
+  xss-blind-bot:
+    build: ./xss/blind-bot
+    environment:
+      - TARGET_URL=http://xss:5000
+      - ADMIN_SESSION_TOKEN=s3cr3t-admin-session-token-change-me
+      - INTERVAL_MS=5000
+    depends_on: [xss]
+    restart: unless-stopped
+
+  # ---------------- SQLi ----------------
+  sqli:
+    build: ./sqli
+    ports: ["5107:5000"]
+    restart: unless-stopped
+
+  # ---------------- XML Injection / XXE ----------------
+  xxe:
+    build: ./xxe
+    ports: ["5108:5000"]
+    depends_on: [collector]
+    restart: unless-stopped
+
+  collector:
+    build: ./xxe/collector
+    ports: ["5109:9000"]   # published so players can check /leaked themselves
+    restart: unless-stopped
+
+  # ---------------- Command Injection ----------------
+  cmdi:
+    build: ./cmdi
+    ports: ["5110:5000"]
+    restart: unless-stopped

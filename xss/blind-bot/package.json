@@ -1,0 +1,9 @@
+{
+  "name": "blind-xss-admin-bot",
+  "version": "1.0.0",
+  "description": "Simulated admin bot for the blind XSS lab - visits the feedback queue with an admin session and really executes any script it finds.",
+  "main": "bot.js",
+  "dependencies": {
+    "happy-dom": "^21.0.4"
+  }
+}
